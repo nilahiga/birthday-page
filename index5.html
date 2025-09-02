@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Поздравление Надежде Константиновне</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+      font-family: 'Dancing Script', cursive;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .overlay {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 30px;
+      border-radius: 25px;
+      text-align: center;
+      max-width: 700px;
+      animation: fadeInOverlay 1.8s ease-in-out forwards;
+    }
+
+    h1 {
+      color: #d63384;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeInText 2s ease-in-out forwards;
+      animation-delay: 0.5s;
+    }
+
+    p {
+      color: #444;
+      font-size: 20px;
+      margin-bottom: 15px;
+      line-height: 1.6;
+      display: inline-block; /* inline-block чтобы span блокировал строки */
+    }
+
+    p span {
+      display: block;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInLine 1s forwards;
+    }
+
+    img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 6px solid #d63384;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      opacity: 0;
+      animation: fadeInText 2s ease-in-out forwards;
+      animation-delay: 1.5s;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 25px;
+      background: #d63384;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+    }
+
+    button:hover {
+      background: #a61e65;
+      transform: scale(1.05);
+    }
+
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    @keyframes fadeInText {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInOverlay {
+      0% { opacity: 0; transform: scale(0.95); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeInLine {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .heart {
+      position: absolute;
+      color: rgba(255,0,100,0.6);
+      font-size: 20px;
+      animation: floatDown linear forwards;
+    }
+
+    @keyframes floatDown {
+      0% { transform: translateY(-10%); opacity: 1; }
+      100% { transform: translateY(110vh); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div class="overlay">
+    <h1>С Днём Рождения, Надежда Константиновна!</h1>
+    <p id="message">
+      <span>Дорогая Надежда Константиновна!</span>
+      <span>Поздравляю от всей души с Днем Рождения 🎉</span>
+      <span>Пусть каждый день дарит Вам тепло, внимание и радость.</span>
+      <span>Крепкого здоровья, уюта в доме, вдохновения и прекрасного настроения!</span>
+      <span>Пусть рядом всегда будут любящие люди,</span>
+      <span>а добрые мечты исполняются.</span>
+      <span>С любовью и благодарностью — зять :)</span>
+    </p>
+    <img src="5309884595535216846.jpg" alt="Именинница">
+    <br>
+    <button onclick="launchFireworks()">✨ Нажмите для салюта</button>
+    <br>
+    <button onclick="toggleMusic()">🎵 Включить музыку</button>
+  </div>
+
+  <audio id="music" loop>
+    <source src="ABBA - happy birthday to you - happy birthday to you.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const music = document.getElementById("music");
+
+    function toggleMusic() {
+      if (music.paused) music.play();
+      else music.pause();
+    }
+
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.innerText = "❤";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.fontSize = Math.random() * 20 + 15 + "px";
+      heart.style.animationDuration = (Math.random() * 4 + 3) + "s";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 7000);
+    }
+
+    setInterval(createHeart, 600);
+
+    // Плавное появление строк текста по очереди
+    const lines = document.querySelectorAll('#message span');
+    lines.forEach((line, index) => {
+      line.style.animationDelay = (index * 0.7) + 's';
+    });
+
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+    function random(min, max) { return Math.random() * (max - min) + min; }
+
+    function launchFireworks() {
+      const x = random(canvas.width*0.2, canvas.width*0.8);
+      const y = random(canvas.height*0.2, canvas.height*0.5);
+      for (let i = 0; i < 100; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          dx: random(-5, 5),
+          dy: random(-5, 5),
+          size: random(2, 5),
+          life: 100,
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`
+        });
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p, i) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        p.dy += 0.05;
+        p.life--;
+        if (p.life <= 0) particles.splice(i, 1);
+      });
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
